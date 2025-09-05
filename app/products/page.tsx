@@ -4,7 +4,6 @@ import ProductsTable from './Components/ProductsTable/ProductsTable'
 export default async function page() {
 
     const products = await getProductList()
-    console.log(products)
     return (
         <div className='p-4 mt-8 container  mx-auto'><ProductsTable products={products} /></div>
     )
