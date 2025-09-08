@@ -14,16 +14,17 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
+import { useTableContext } from '@/app/products/Components/ProductsTable/TableContext'
 
 type Props<TData> = {
-    table: TableType<TData>
     pageSizeOptions?: number[]
 }
 
 export default function Pagination<TData>({
-    table,
     pageSizeOptions = [10, 20, 30, 40, 50],
 }: Props<TData>) {
+    const { table } = useTableContext();
+
     const pageIndex = table.getState().pagination.pageIndex
     const pageSize = table.getState().pagination.pageSize
     const pageCount = table.getPageCount()
