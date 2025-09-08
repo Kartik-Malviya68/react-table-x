@@ -1,11 +1,5 @@
 "use client"
 
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { ProductList } from '@/fetch/getProductList/getProductListService'
 import { flexRender } from '@tanstack/react-table'
 import * as React from 'react'
@@ -18,47 +12,19 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import Pagination from '@/components/Table/Pagination/Pagination'
-import { Input } from '@/components/ui/input'
+// ...existing code...
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, ArrowUpDown } from "lucide-react"
 import { TableProvider, useTableContext } from './TableContext'
+import ProductsTableToolbar from './ProductsTableToolbar'
 import { ProductTableColumn } from './ProductTableColumn'
 
 function TableInner() {
-    const { table, globalFilter, setGlobalFilter } = useTableContext()
+    const { table } = useTableContext()
 
     return (
         <div className="flex flex-col gap-2 p-2">
-            <div className="flex items-center gap-2 py-4">
-                <Input
-                    className="max-w-sm"
-                    placeholder="Search products..."
-                    value={globalFilter}
-                    onChange={(e) => setGlobalFilter(e.target.value)}
-                />
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            Columns <ChevronDown className="ml-1 h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter((column) => column.getCanHide())
-                            .map((column) => (
-                                <DropdownMenuCheckboxItem
-                                    key={column.id}
-                                    className="capitalize"
-                                    checked={column.getIsVisible()}
-                                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                                >
-                                    {column.id}
-                                </DropdownMenuCheckboxItem>
-                            ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
+            <ProductsTableToolbar />
             <Table
                 containerClassName="max-h-[400px] overflow-y-auto"
                 className="border-separate border-spacing-0"
@@ -146,8 +112,9 @@ function TableInner() {
 }
 
 export default function ProductsTable({ products }: { products: ProductList }) {
+    const memo = React.useMemo(() => ProductTableColumn(), [])
     return (
-        <TableProvider products={products}>
+        <TableProvider products={products} cols={memo}>
             <TableInner />
         </TableProvider>
     )

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from 'react'
-import { ProductList } from '@/fetch/getProductList/getProductListService'
+import { Product, ProductList } from '@/fetch/getProductList/getProductListService'
 import { ProductTableColumn } from '@/app/products/Components/ProductsTable/ProductTableColumn'
 import { filterFns } from '@/utils/filters'
 import {
@@ -13,6 +13,7 @@ import {
     Table as TableType,
     SortingState,
     ColumnFiltersState,
+    ColumnDef,
 } from '@tanstack/react-table'
 
 type TableContextType = {
@@ -31,7 +32,7 @@ type TableContextType = {
 
 const TableContext = React.createContext<TableContextType | undefined>(undefined)
 
-export function TableProvider({ products, children }: { products: ProductList; children: React.ReactNode }) {
+export function TableProvider({ products, children, cols }: { products: ProductList; children: React.ReactNode, cols: ColumnDef<Product>[] }) {
     const [globalFilter, setGlobalFilter] = React.useState('')
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -40,7 +41,7 @@ export function TableProvider({ products, children }: { products: ProductList; c
 
     const table = useReactTable({
         data: products.products,
-        columns: ProductTableColumn(),
+        columns: cols,
         filterFns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
