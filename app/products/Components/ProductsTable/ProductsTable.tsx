@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import {
     DropdownMenu,
@@ -7,16 +7,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ProductList } from '@/fetch/getProductList/getProductListService'
-import {
-    getCoreRowModel,
-    useReactTable,
-    flexRender,
-    getPaginationRowModel,
-    getFilteredRowModel,
-    getSortedRowModel,
-    SortingState,
-    ColumnFiltersState,
-} from '@tanstack/react-table'
+import { flexRender } from '@tanstack/react-table'
 import * as React from 'react'
 import {
     Table,
@@ -26,44 +17,15 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { ProductTableColumn } from '@/app/products/Components/ProductsTable/ProductTableColumn'
 import Pagination from '@/components/Table/Pagination/Pagination'
 import { Input } from '@/components/ui/input'
-import { filterFns } from '@/utils/filters'
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, ArrowUpDown } from "lucide-react"
+import { TableProvider, useTableContext } from './TableContext'
+import { ProductTableColumn } from './ProductTableColumn'
 
-export default function ProductsTable({ products }: { products: ProductList }) {
-    const [globalFilter, setGlobalFilter] = React.useState('')
-    const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState({})
-    const [rowSelection, setRowSelection] = React.useState({})
-
-    const table = useReactTable({
-        data: products.products,
-        columns: ProductTableColumn(),
-        filterFns,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
-        // keep only ASC<->DESC (no "unsorted" on 3rd click)
-        enableSortingRemoval: false,
-        // allow Shift+click to multi-sort (optional)
-        enableMultiSort: true,
-        state: {
-            sorting,
-            columnFilters,
-            columnVisibility,
-            rowSelection,
-            globalFilter,
-        },
-    })
+function TableInner() {
+    const { table, globalFilter, setGlobalFilter } = useTableContext()
 
     return (
         <div className="flex flex-col gap-2 p-2">
@@ -180,5 +142,13 @@ export default function ProductsTable({ products }: { products: ProductList }) {
 
             <Pagination table={table} />
         </div>
+    )
+}
+
+export default function ProductsTable({ products }: { products: ProductList }) {
+    return (
+        <TableProvider products={products}>
+            <TableInner />
+        </TableProvider>
     )
 }
